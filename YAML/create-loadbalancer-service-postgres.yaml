@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: postgres
+  labels:
+    app: postgres
+spec:
+  type: Loadbalancer # I Set the service type to loadbalancer
+  ports:
+    - targetPort: 5432 
+      protocol: TCP
+      port: 5432              
+      nodePort: 30002 # actuall DB port
+  selector:
+    app: postgres

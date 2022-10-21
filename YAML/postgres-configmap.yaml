@@ -1,0 +1,15 @@
+# Create ConfigMap postgres-secret for the postgres app
+# Defined default database name, username, and password in it
+# also I should have used secret for safe storing these data but for demonstration I just use this. mTaghadosi
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-secret
+  namespace: postgres
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: OpenDressDB
+  POSTGRES_USER: OpenDress_user
+  POSTGRES_PASSWORD: strongpasswordapp_OpenDress
