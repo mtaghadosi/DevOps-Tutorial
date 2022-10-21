@@ -38,3 +38,9 @@ Let’s create some services to expose our nginx (I want to keep it so simple in
 
 NOW! If we check the port 30001 from outside network, we should see the static website. It can auto scale to maintain itself with the input load (making more PODs when it is necessary and deleting additional PODs when it is not necessary).
 
+# CI/CD automations stage:
+
+As long as we use two different git repositories for our application and we need to continuously update and push the code to git and deploy and integrate our product, we need some automation methods. I use Jenkins for this solution. With it we can pull the code (even the pull can be automated using web-hooks) and after every commit we can test and build and release (our artifact) and deploy our product. I wrote a Jenkins file and tried to be as realistic as possible but in real industrial level. I describe that in next steps.
+
+- [Jenkins file for CI/CD automation.](/Jenkinsfile)
+
