@@ -33,4 +33,8 @@ kubectl apply -f dep-nginx-exposed-with-nfs-pvc.yaml
 kubectl autoscale deployment nginx-external-deployment -n nginx-exposed --cpu-percent=70 --min=2 --max=100
 kubectl get hpa --all-namespaces
 ```
+Let’s create some services to expose our nginx (I want to keep it so simple in real work we can use ingress and have DNS and https but I just use IP address). I created a YAML file for LoadBalancer service that is a good fit for autoscaling feature that we implemented above, it distributes all traffics to all the nodes using round-robin algorithm.
+- [Create a LoadBalancer Service for nginX Deployment](/YAML/creat-loadbalancer-nginx.yaml)
+
+NOW! If we check the port 30001 from outside network, we should see the static website. It can auto scale to maintain itself with the input load (making more PODs when it is necessary and deleting additional PODs when it is not necessary).
 
