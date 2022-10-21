@@ -11,7 +11,10 @@ Also i created a PersistentVolume (PV) and a PersistentVolumeClaim (PVC) for sto
  - [PersistentVolume (PV) for Postgres DB](/YAML/create-pv-for-postgres.yaml)
  - [PersistentVolumeClaim (PVC) for Postgres DB](/YAML/create-pvc-for-postgres.yaml)
 
- Time to install the Database on the cloud, pay attention that I created a namespace named `postgres` and deployed all database in it: 
+Also we need a service for our DataBase:
+ - [Loadbalancer Service for postgres](/YAML/create-loadbalancer-service-postgres.yaml)
+
+Time to install the Database on the cloud, pay attention that I created a namespace named `postgres` and deployed all database in it: 
 
  ```
  kubectl apply -f postgres-configmap.yaml
