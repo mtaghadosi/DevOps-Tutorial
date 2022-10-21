@@ -46,3 +46,10 @@ As long as we use two different git repositories for our application and we need
 
 ![Jenkinsfile-demo-1](/assets/jenkins-demo-1.jpg)
 
+### Answers:
+- [Task-1](/solutions/task1.md)
+- [Task-2](/solutions/task2.md)
+- [Task-3](/solutions/task3.md)
+- [Task-4](/solutions/task4.md)
+- [Task-5](/solutions/task5.md)
+
