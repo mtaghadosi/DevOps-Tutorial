@@ -6,7 +6,7 @@
  Task 2 doesn’t seem to need some solutions, it’s a pre-description for task 3 and task 4. But I want to mention that if we need to start another project from our original software we can just copy and start a new project or we can use another branch of our git repository. I also want to mention that regarding to the project that we have, we also need a `postgres` database server so I can install it on the k8s on-premises cloud by using helm or manually. I prefer the hard way, because it is more flexible, I created a YAML file that contains all the necessary information to create a complete postgresSQL deployment:
  - [postgresSQL ConfigMap](/YAML/postgres-configmap.yaml)
  - [PostgresSQL Deployment YAML file](/YAML/dep-postgresDB.yaml)
- Also i created a PersistentVolume (PV) and a PersistentVolumeClaim (PVC) for storing the database in it:
+Also i created a PersistentVolume (PV) and a PersistentVolumeClaim (PVC) for storing the database in it:
  - [PersistentVolume (PV) for Postgres DB](/YAML/create-pv-for-postgres.yaml)
  - [PersistentVolumeClaim (PVC) for Postgres DB](/YAML/create-pvc-for-postgres.yaml)
 
