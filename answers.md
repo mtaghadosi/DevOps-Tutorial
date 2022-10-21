@@ -18,4 +18,5 @@ kubectl get node --all-namespaces
 Now, first and before even install the nginx we need to figure out how to store or static website and all relative data, in other language we need to host our static JavaScript files (that written in TypeScript and React). So, we need a persistence storage. For that storage we can use Amazon S3 or NFS or other solutions for storage backend and then combine all those solutions into some YAML files and then deploy them. This will let us have a persistence volume (called PV). Let assume that we decide to use a secure NFS server. The YAML files will look like something like bellow, we first bind the storage, then we claim the storage with PVC and finally we assign it to the pods that used for our nginx.
  - [Create a Per-Volume](/YAML/create-PV-nfs.yaml)
  - [Create a Per-Volume claim](/YAML/create-PVC.yaml).
+
 We also have a namespace for our nginX. Our persistence volume claim and all of our pods are in that namespace, let's assume that the name is `nginx-exposed`. We know that the PVs don't have namespaces right? yeah! So let's Apply them using the commands bellow.
