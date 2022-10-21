@@ -1,4 +1,4 @@
-# DevOps Answers 
+# Task1 solution
 #### This file contains all the necessary information’s about my decisions regarding to 5 questions that is in [instructions.md](instructions.md) file.
 #### Answers by Mohammad Taghadosi ( Whole projects uploaded in [my GitHub](https://github.com/mtaghadosi/DevOps-Tutorial) )
 #### This is not a complete solution, I tried to visualize the hole picture.
@@ -19,4 +19,4 @@ Now, first and before even install the nginx we need to figure out how to store 
  - [Create a Per-Volume](/YAML/create-PV-nfs.yaml)
  - [Create a Per-Volume claim](/YAML/create-PVC.yaml).
 
-We also have a namespace for our nginX. Our persistence volume claim and all of our pods are in that namespace, let's assume that the name is `nginx-exposed`. We know that the PVs don't have namespaces right? yeah! So let's Apply them using the commands bellow.
+We also have a namespace for our nginX. Our persistence volume claim and all of our pods are in that namespace, let's assume that the name is `nginx-exposed`. We know that the PVs don't have namespaces right? yeah! So let's Apply them using the commands bellow:
