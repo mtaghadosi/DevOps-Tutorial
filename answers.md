@@ -1,6 +1,6 @@
 # DevOps Answers 
-#### This file contains all the necessary information’s about my decisions regarding to 5 questions that is in [a relative link](instructions.md) file.
-#### Answers by Mohammad Taghadosi ( Whole projects uploaded in my GitHub=> [a link](https://github.com/mtaghadosi/DevOps-Tutorial) )
+#### This file contains all the necessary information’s about my decisions regarding to 5 questions that is in [instructions.md](instructions.md) file.
+#### Answers by Mohammad Taghadosi ( Whole projects uploaded in [my GitHub](https://github.com/mtaghadosi/DevOps-Tutorial) )
 #### This is not a complete solution, I tried to visualize the hole picture.
 
 # Answers: (Every number refers to task numbers)
