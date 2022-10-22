@@ -1,3 +1,7 @@
+// positive messages begins with + and negetive ones begins with - 
+// 
+//
+//
 pipeline{
     agent any
     environment {
@@ -8,18 +12,18 @@ pipeline{
         stage('pre-compile-stage'){
             steps{
                 script{
-                    echo '*Stage1 - Please wait, doing some stuff*'
+                    echo '*Stage1 - Checking Pre requerments...*'
                     //check-to-see that python is installed or-not-m.taghadosi
-                    echo '- checking installation of python, Please wati...'
+                    echo '+ checking installation of python, Please wati...'
                     try
                     {
                         pyver=bat(returnStdout: true, script: '@python --version')
                         echo "+ The result of pycheck was: $pyver"
-                        echo '+ Python 3 is up and running on the system. '
+                        echo '+ Python is up and running on the system. '
                         echo '+ It\'s good to continue... '
                     }catch(Exception pynot){
                         //python not installed.
-                        //here I am planning to install the Python in feature releases, in this step. <m.Taghadosi>
+                        //here I am planning to install the Python in next version of pipeline. <m.Taghadosi>
                         echo '- Python not installed or version is under 3.'
                         echo '- Please install Python at least ver.3 and run the job again '
                         error '- The Exact error was: ' + pynot.toString()
@@ -27,16 +31,17 @@ pipeline{
                     }
                     try
                     {
-                        pipresult=bat(returnStdout: true, script: '@python3 -m pip --version')
+                        pipresult=bat(returnStdout: true, script: '@python -m pip --version')
                         echo "+ The result of pycheck was: $pipresult"
                         echo '+ Pip is up and running on the system. '
                         echo '+ It\'s good to continue... '
-                    }catch(Exception _notPip){
+                    }catch(Exception _noPip){
                         echo '- Pip not installed. trying to install it...'
+                        error '- The Exact error was: ' + _noPip.toString()
                         try
                         {
                             pipresult=bat(returnStdout: true, script: '@python3 -m pip install --user --upgrade pip')
-                            echo '+ Pip installed continuing... '
+                            echo '+ Pip installed. Continuing... '
                         }catch(Exception fatal){
                             echo '- Oh, something bad happened when trying to install the pip, check the log '
                             error ('- the error was: ' + fatal.toString())
@@ -44,19 +49,20 @@ pipeline{
                     }
                     try
                     {
-                        venv=bat(returnStdout: true, script:'@python -m venv -h').trim()
+                        venv=bat(returnStdout: true, script:'@python3 -m venv -h').trim()
                         echo "+ The result of venv-check was: $venv"
                         echo '+ venv is ready on the system'
                         echo '+ It\'s good to continue... '
                     }catch(Exception _notVenv){
                         echo '- venv not installed. trying to install it...'
+                        error '- The Exact error was: ' + _notVenv.toString()
                         try
                         {
-                            pipresult=bat(returnStdout: true, script: '@py -m pip install --user virtualenv')
-                            echo '+ venv installed continuing... '
+                            pipresult=bat(returnStdout: true, script: '@python3 -m pip install --user virtualenv')
+                            echo '+ venv installed. Continuing... '
                         }catch(Exception fatl){
                             echo '- Oh, something bad happened when trying to install the venv, check the log '
-                            error ('- the error was: ' + fatal.toString())
+                            error ('- The error was: ' + fatl.toString())
                         }
                     }
                 }
