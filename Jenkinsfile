@@ -5,7 +5,7 @@
 pipeline{
     agent any
     environment {
-        pyInstallerOutput = ''                      //the variable that contains the PyInstaller results, this actually indicates that if PyInstaller is installed on system or not.
+        venv_name = ''                              //python virtual environment name.
         NAME = 'Created by. Mohammad-Taghadosi'     //cr34tedby
     }
     stages{
@@ -62,68 +62,71 @@ pipeline{
                             echo '+ venv installed. Continuing... '
                         }catch(Exception fatl){
                             echo '- Oh, something bad happened when trying to install the venv, check the log '
-                            error ('- The error was: ' + fatl.toString())
+                            error '- The error was: ' + fatl.toString()
                         }
                     }
                 }
 
             }
         }
-        stage('compile-stage'){
+        stage('preparing-environment'){
             steps{
                 script {
-                        echo '*Stage2 - Trying to compile python program*'
-                        output = bat (returnStdout: true, script: '@python ./codes/SayHello.py')
-                        echo "+ The result of compile was: $output"
-                        //checking application-output to see that 
-                        //the app ran successfully <m.Taghadosi>
-                        //or not
-                        if ("$output".contains('Hello')) {
-                            echo '+ Compile checked, no error found, Good to continue... '
-                        }  else {
-                            error('+ Error in python compilation, stopping NOW please check the log... ')
+                        echo '*Stage2 - Preparing environment...*'
+                        //venv name will be set acording to date and time of execution so this naming has two benefits:
+                        //1. It's unique 
+                        //2. It's meanfull.
+                        //using the command i get that:
+                        //echo %date:~-4,4%-%date:~-10,2%-%date:~7,2%-%time:~-11,2%%time:~-8,2%%time:~-5,2%
+
+                        venv_name = bat(returnStdout: true,script: '@echo %date:~-4,4%-%date:~-10,2%-%date:~7,2%-%time:~-11,2%%time:~-8,2%%time:~-5,2%').trim())
+                        try
+                        {
+                            bat (returnStdout: true, script: "@python3 -m venv $venv_name")
+                            echo "+ Successfully created venv."
+                        } catch(Exception er){
+                            error('- Error happened while trying to create the venv.')
+                        }
+                        try
+                        {
+                            bat("\\$venv_name\\Scripts\\activate.bat") //going into the environment this command in equal to "Scripts\activate.bat" in linux
+                            bat (returnStdout: true, script: 'pip install -r requirements.txt') //installing tools in the venv
+                            echo('All OK...')
+                        }catch(Exception err){
+                            echo('Failed to installing some of requerments, Please check the log.')
+                            error err.toString()
+                        }
+                    }
+            }
+        }
+        stage('Deployment-stage'){
+            steps{
+                script {
+                        echo '*Stage3 - Running webserver...*'
+                        try
+                        {
+                            output = bat (returnStdout: true, script: 'uvicorn main:app --reload')
+                            echo "+ Successfull."
+                        }catch(Exception et){
+                            error '- Failed, error was: ' + et.toString()
                         }
                     }
             }
         }
         stage('artifact-build-stage'){
-            //in this stage i'm gonna compile the python app to an articat <m.Taghadosi>
+            //in this stage the pipeline stores the python API app to an articat <m.Taghadosi>
             //and also copy that artifact to a repository like Nexus Or just a categorized folder.
             steps{
                 //bat 'dir'
                 //echo bat(returnStdout: true, script: 'set') //Environmental Variables - usefull sometimes <mt>
                 script{
-                    //first checking that do we have pyinstaller or not 
-                    //if not the program tries to install it and if successfull <m.Taghadosi> 
-                    //the artifact building starts if not pipeline stops
-                    echo '*Stage3 - Trying to build python program and export the Artifact*'
+                    echo '*Stage4 - Trying to Artifact pythonAPI and export Artifact*'
                     try{
-                        pyInstallerOutput = bat(returnStdout: true, script: '@python -m PyInstaller -v').trim()
-                        //PyInstaller is up and running. good!
-                        //let build-artifact
-                        echo "+ PyInstaller Version: $pyInstallerOutput is up and running. good! building artifact"
-                        directoryName = bat(returnStdout: true,script: '@echo %date:~-4,4%-%date:~-10,2%-%date:~7,2%-%time:~-11,2%%time:~-8,2%%time:~-5,2%').trim()
-                        echo ("+ Current Artifact directory: $directoryName")
-                        artifactResult = bat(returnStdout: true, script: "@python -m PyInstaller --specpath ./artifacts-repo/${directoryName}/spec --distpath ./artifacts-repo/${directoryName}/dist --workpath ./artifacts-repo/${directoryName}/build --onefile ./codes/SayHello.py")
+                        //Copying the artifact into the folder with unique name that i explained above
+                        echo("xcopy /s .\\python_service\\* .\\artifacts\\$venv_name\\*")
                     }catch(Exception e){
-                        echo '- PyInstaller verification failed! The Error was: ' + e.toString()
-                        echo '+ Attemping to install pyInstaller'
-                        //pyInstaller not present m.taghadosi
-                        //trying to install it
-                        try{
-                            bat(returnStdout: true, script: '@pip install pyinstaller --no-warn-script-location')
-                            echo '+ PyInstaller installed successfully, Now building Artifact.'
-                            directoryName = bat(returnStdout: true,script: '@echo %date:~-4,4%-%date:~-10,2%-%date:~7,2%-%time:~-11,2%%time:~-8,2%%time:~-5,2%').trim()
-                            echo ("+ Current Artifact directory: $directoryName")
-                            artifactResult = bat(returnStdout: true,script: "@python -m PyInstaller --specpath ./artifacts-repo/${directoryName}/spec --distpath ./artifacts-repo/${directoryName}/dist --workpath ./artifacts-repo/${directoryName}/build --onefile ./codes/SayHello.py")
-                            //if this block reaches to end it means successfull installation
-                        }catch (Exception ee){
-                            //error installing nothing more can be done. stoping pipeline.
-                            echo('- Installation failed the error was: ' + ee.toString())
-                            error('- PyInstaller installation failed, nothing more can be done by pipeline, try to see the logs, STOPING...')
-                        }
+                        error '- Failed to Copy artifact! The Error was: ' + e.toString()
                     }
-
                 }
             }
         }
@@ -131,14 +134,18 @@ pipeline{
 
     post{
         always{
-            echo 'Attemping some cleanup works.'
+            echo 'Attemping some cleanup...'
+            echo ("rmdir /s /q $venv_name") //delete the venv folder 
+
             echo "${NAME}"
-            //i want to add some cleanups later <m.Taghadosi>
+            //<m.Taghadosi>
         }
         success{
             echo 'The Pipeline execution was a SUCCESS.'
         }
         failure{
+            echo 'Attemping to remove the not-healthy artifact'
+            echo ("rmdir /s /q artifacts\\$venv_name") //delete the venv folder 
             echo 'Some stages failed, removing temp files.'
             //i want to add some cleanups later <m.Taghadosi>
         }

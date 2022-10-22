@@ -6,7 +6,7 @@ Ensure you have python3, pip and venv installed. Then run:
 
 ```
 python3 -m venv venv
-source venv/bin/activate
+Scripts\activate.bat
 pip install -r requirements.txt
 ```
 
